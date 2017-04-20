@@ -38,10 +38,17 @@ public class LogAspect {
         HashMap<String, Object> paramsMap = generateParamsMap(pjp);
         long start = System.currentTimeMillis();
         log.info("query step into [{}.{}], params:[{}]", declaringType, methodSignature.getMethod().getName(), paramsMap);
-        Object result = pjp.proceed();
-        long end = System.currentTimeMillis();
-        log.info("query step out [{}.{}], return:[{}], time cast:[{}]ms", declaringType, methodSignature.getMethod().getName(),
-                result, end - start);
+
+        Object result = null;
+        try {
+            result = pjp.proceed();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            long end = System.currentTimeMillis();
+            log.info("query step out [{}.{}], return:[{}], time cast:[{}]ms", declaringType, methodSignature.getMethod().getName(),
+                    result, end - start);
+        }
         return result;
     }
 
